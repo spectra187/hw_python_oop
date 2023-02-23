@@ -1,5 +1,5 @@
 from dataclasses import dataclass, asdict
-from typing import ClassVar
+from typing import ClassVar, Dict, Union, Type
 
 
 @dataclass
@@ -22,15 +22,14 @@ class InfoMessage:
         return self.MESSAGE.format(**asdict(self))
 
 
-@dataclass
 class Training:
     """Базовый класс. Содержит основные свойства и методы для тренировок."""
     action: int
     duration: float
     weight: float
-    M_IN_KM: ClassVar[int] = 1000  # Для конвертации метров в километры
-    LEN_STEP: ClassVar[float] = 0.65  # Длина шага
-    MIN_IN_H: ClassVar[int] = 60  # Для конвертации минут в часы
+    M_IN_KM: ClassVar[int] = 1000
+    LEN_STEP: ClassVar[float] = 0.65
+    MIN_IN_H: ClassVar[int] = 60
 
     def get_distance(self) -> float:
         """Вычисляет пройденную дистанцию в км."""
@@ -45,7 +44,8 @@ class Training:
         Вычисляет количество затраченных калорий. Метод вычисления уникален для
         каждой тренировки. Переопределяется в классах-наследниках.
         """
-        return self.get_spent_calories()
+        raise not NotImplementedError(
+            "метод get_spent_calories не переопределен у наследника")
 
     def show_training_info(self) -> InfoMessage:
         """Возвращает сообщение в виде экземпляра класса InfoMessage."""
@@ -101,7 +101,7 @@ class SportsWalking(Training):
 class Swimming(Training):
     """Описывает тренировку - Swimming."""
 
-    LEN_STEP = 1.38  # Передвижение за один гребок
+    LEN_STEP = 1.38
     CALORIES_MEAN_SPEED_SHIFT: float = 1.1
     CALORIES_WEIGHT_MULTIPLIER: int = 2
 
@@ -137,7 +137,7 @@ def read_package(type_training: str, data: list) -> Training:
     Считывает данные с датчика. Возвращает экземпляр класса Training.
     Переменная training_comparsion хранит соответствие аббревиатур тренировкам.
     """
-    training_comparsion = {
+    training_comparsion: Dict[str, Union[Swimming, Running, SportsWalking]] = {
         'SWM': Swimming,
         'RUN': Running,
         'WLK': SportsWalking,
