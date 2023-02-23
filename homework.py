@@ -24,12 +24,18 @@ class InfoMessage:
 
 class Training:
     """Базовый класс. Содержит основные свойства и методы для тренировок."""
-    action: int
-    duration: float
-    weight: float
     M_IN_KM: ClassVar[int] = 1000
     LEN_STEP: ClassVar[float] = 0.65
     MIN_IN_H: ClassVar[int] = 60
+
+    def __init__(self,
+                 action: int,
+                 duration: float,
+                 weight: float,
+                 ) -> None:
+        self.action = action
+        self.duration = duration
+        self.weight = weight
 
     def get_distance(self) -> float:
         """Вычисляет пройденную дистанцию в км."""
